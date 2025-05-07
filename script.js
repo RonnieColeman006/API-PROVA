@@ -16,4 +16,4 @@ function registrarLog(nomeAluno) {
 }
 
 
-const nomes2 = registrarLog('Luiz')
+const nomes2 = registrarLog('Gustavo')
