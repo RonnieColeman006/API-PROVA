@@ -41,3 +41,34 @@ app.post('/logs', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
+
+
+const fs = require('fs');
+const path = require('path');
+
+
+app.get('/logs/:id', (req, res) => {
+  const idBuscado = req.params.id;
+  const caminhoLog = path.join(__dirname, 'logs.txt');
+
+
+  if (!fs.existsSync(caminhoLog)) {
+    return res.status(404).json({ erro: 'Arquivo de logs não encontrado.' });
+  }
+
+  try {
+    const conteudo = fs.readFileSync(caminhoLog, 'utf8');
+    const linhas = conteudo.split('\n');
+    
+    const linhaEncontrada = linhas.find(linha => linha.startsWith(idBuscado));
+    
+    if (linhaEncontrada) {
+      return res.status(200).json({ log: linhaEncontrada });
+    } else {
+      return res.status(404).json({ erro: 'Log com o ID informado não encontrado.' });
+    }
+  } catch (error) {
+    console.error('Erro ao ler o arquivo de logs:', error);
+    return res.status(500).json({ erro: 'Erro interno ao buscar o log.' });
+  }
+});
